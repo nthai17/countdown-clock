@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown clock</title>
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+        #countdown{
+            padding: 20px;
+            background-color: rgb(75, 61, 88);
+            width: 500px;
+            margin: 0 auto;
+            position: relative;
+            border-radius: 22px;
+        }
+        #time{
+            width: 100%;
+            display: flex;
+            position: relative;
+        }
+        #countdown::after{
+            content: '';
+            height: 80px;
+            width: 10px;
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            background-color: rgba(75, 61, 88, 0.767);
+        }
+        #countdown::before{
+            content: '';
+            height: 80px;
+            width: 10px;
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            background-color: rgba(75, 61, 88, 0.767);
+        }
+        #time span{
+            display: block;
+            width: 115px;
+            height: 80px;
+            margin: 0 10px;
+            border-radius: 10px;
+            background-color: burlywood;
+            font-size: 30px;
+            text-align: center;
+            line-height: 80px !important;
+            font: bold 30px 'Droid Sans', Arial, sans-serif;
+            color: darkolivegreen;
+        }
+        #lable{
+            padding-left: 0;
+            list-style: none;
+            display: flex;
+            width: 100%;
+        }
+        #lable li {
+            width: 115px;
+            text-align: center;
+            font: bold 15px 'Droid Sans', Arial, sans-serif;
+            color:crimson;
+            font-size: 20px;
+        }
+        #time-btn{
+            margin: 300px auto 20px;
+            text-align: center;
+        }
+        #time-btn input{
+            height: 40px;
+            font-size: 20px;
+            border: 3px solid rgb(75, 61, 88);
+        }
+    </style>
+</head>
+<body>
+    <div id="time-btn">
+        <h2>Countdown Clock</h2>
+        <!-- có vấn đề với 1 vài trình duyệt -->
+        <input type="date" name="date">
+    </div>
+    <div id="countdown">
+        <div id="time"></div>
+        <ul id="lable">
+            <li>Days</li>
+            <li>Hours</li>
+            <li>Mins</li>
+            <li>Secs</li>
+        </ul>
+    </div>
+    <script>
+        // để mặc định đếm ngược đến Noel 2021 :D
+        let targetTime = new Date('2021-12-24').getTime() + (1000*3600*48)
+        let days, hours, mins, secs;
+        let countdown = document.getElementById('time')
+        getCountDown()
+        setInterval(function(){
+            getCountDown()
+        }, 1000)
+        function getCountDown(){
+            // lấy ngày hiện tại - lấy dạng millisecond
+            let currentTime = new Date().getTime()
+            // lấy phần chênh giữa ngày hiện tại và ngày mục tiêu - giây
+            let secondLeft = (targetTime - currentTime)/1000
+            // lấy ra số ngày
+            days = render(parseInt(secondLeft / 86400))
+            // lấy phần dư từ ngày để tính giờ
+            secondLeft = secondLeft % 86400
+            hours = render(parseInt(secondLeft / 3600))
+            // lấy phần dư từ giờ để tính phút
+            secondLeft = secondLeft % 3600
+            mins = render(parseInt(secondLeft / 60))
+            // lấy phần dư của phút để tính giây
+            secs = render(parseInt(secondLeft % 60))
+            countdown.innerHTML = `<span>${days}</span><span>${hours}</span><span>${mins}</span><span>${secs}</span>`
+        }
+        // hàm hiển thị, nếu ngày, tháng, phút, giờ mà nhỏ hơn 10 thì thêm số '0' vào trước : 00: 00 : 00: 00
+        function render(n) {
+	        return (n < 10 ? '0' : '') + n;
+        }
+        // lấy input[type='date']
+        let timeInput = document.querySelector('#time-btn input')
+        // ép ngày tối thiểu có thể đếm ngược là ngày mai
+        let min = new Date()
+        timeInput.min = `${min.getFullYear()}-${min.getMonth()+1 < 10 ? '0' + (min.getMonth()+1) : min.getMonth()+1}-${min.getDate()+1}`
+        // khi chọn ngày thì thay đổi mục tiêu và đếm lại
+        timeInput.onchange = function(e){
+            targetTime = new Date(e.target.value).getTime()
+        }
+    </script>
+</body>
+</html>
